@@ -3,8 +3,6 @@
 Documentação completa para usar este template de segurança ofensiva com o
 **Claude Code**. Do zero ao primeiro relatório.
 
----
-
 ## 📑 Índice
 
 1. [O que é este template](#1-o-que-é-este-template)
