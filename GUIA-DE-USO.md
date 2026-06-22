@@ -3,11 +3,6 @@
 Documentação completa para usar este template de segurança ofensiva com o
 **Claude Code**. Do zero ao primeiro relatório.
 
-> ⚠️ **Antes de tudo:** este template é para **testes autorizados** — pentest com
-> contrato, bug bounty dentro do escopo de um programa, ou laboratórios próprios.
-> Testar sistemas sem autorização é crime (no Brasil, Lei 12.737/2012 e Marco
-> Civil da Internet). Nunca rode nada contra um alvo sem autorização por escrito.
-
 ---
 
 ## 📑 Índice
