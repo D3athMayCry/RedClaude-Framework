@@ -5,7 +5,7 @@
 # Offensive Security Template — Framework Modular para Claude Code
 
 Template global, modular e adaptável para conduzir operações de segurança
-ofensiva **autorizadas** com o Claude Code. Funciona para Web, API, Mobile,
+ofensiva com o Claude Code. Funciona para Web, API, Mobile,
 Network, Red Team, Bug Bounty e pentest corporativo.
 
 > **Novo por aqui? Comece pelo [GUIA-DE-USO.md](GUIA-DE-USO.md)** — documentação
