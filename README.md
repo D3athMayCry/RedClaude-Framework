@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/redclaude-logo.png" alt="RedClaude Framework Logo" width="300">
+  <img src="assets/redclaude-logo.png" alt="RedClaude Framework Logo" width="500">
 </p>
 
 # 🛡️ Offensive Security Template — Framework Modular para Claude Code
