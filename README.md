@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/redclaude-logo.png" alt="RedClaude Framework Logo" width="300">
+</p>
+
 # 🛡️ Offensive Security Template — Framework Modular para Claude Code
 
 Template global, modular e adaptável para conduzir operações de segurança
