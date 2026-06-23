@@ -28,6 +28,43 @@
 
 ---
 
+
+---
+
+## 🎚️ Política de Skills (autoinvocação)
+
+As skills em `.claude/skills/` têm **autoinvocação habilitada** — o Claude pode
+disparar a skill apropriada quando reconhecer a intenção, sem o usuário precisar
+digitar `/comando`. Isso acelera o fluxo, mas em segurança ofensiva exige uma
+trava por **categoria**:
+
+| Categoria (`metadata.category`) | Autoinvocação | Confirmação explícita? |
+|---|---|---|
+| `phase` (recon, validate, report…) | ✅ livre | ❌ não |
+| `analysis` (threat-model, chain, report) | ✅ livre | ❌ não |
+| `passive-recon` (subenum, wayback, jssecrets…) | ✅ livre | ❌ não |
+| `active-recon` (httprobe, crawl, params…) | ✅ livre | ⚠️ confirme alvo+rate |
+| `active-offensive` (nuclei, ffuf, portscan…) | ⚠️ pode planejar | ✅ **OBRIGATÓRIA** |
+
+### Regras de execução
+
+1. Para skills `active-offensive` (`requires-explicit-confirmation: true` no
+   frontmatter), o Claude **pode preparar comandos e explicar o plano**, mas
+   **NÃO executa** o tráfego ativo até receber confirmação explícita do
+   usuário na sessão (ex.: "pode rodar", "ok, dispara", "execute agora").
+2. Antes de executar qualquer skill ativa, o Claude verifica `specs/00-escopo.md`
+   e o `CONFIG` (profundidade, rate_limit, janela_de_testes).
+3. Skills `active-offensive` **nunca rodam** em `profundidade: recon-only` ou
+   `passive`. Para rodar, exige `standard` ou superior.
+4. Se uma skill `active-offensive` for autoinvocada pela intenção, o Claude
+   anuncia: "Identifiquei que faz sentido rodar a skill X. Aqui está o comando
+   preparado: [...]. Confirme com 'rodar' para executar." E aguarda.
+5. Resultados de scanners (Nuclei, FFUF) **sempre** passam por `/validate`
+   antes de virarem achados — eles geram falsos positivos.
+
+> Filosofia: máxima autonomia para coletar, planejar e analisar; trava na hora
+> de mandar pacote ativo ao alvo. O Claude é o navegador; você dá o "vai".
+
 ## 🧩 CONFIG — Edite por engajamento
 
 ```yaml
@@ -135,7 +172,9 @@ Ao iniciar uma tarefa, o Claude Code deve:
 │   └── reporting/
 │       ├── cvss.md               ← guia de classificação
 │       └── report-template.md    ← modelo de relatório
-├── .claude/commands/             ← comandos /custom reutilizáveis
+├── .claude/skills/               ← skills com autoinvocação (formato atual)
+│   └── <nome>/SKILL.md
+├── .claude/commands/             ← comandos /custom (fallback legado, ainda funcional)
 │   ├── recon.md  ├── enum.md  ├── threat-model.md
 │   ├── validate.md  └── report.md
 ├── findings/                     ← achados (1 arquivo por vuln)

@@ -3,6 +3,13 @@
 Documentação completa para usar este template de segurança ofensiva com o
 **Claude Code**. Do zero ao primeiro relatório.
 
+> ⚠️ **Antes de tudo:** este template é para **testes autorizados** — pentest com
+> contrato, bug bounty dentro do escopo de um programa, ou laboratórios próprios.
+> Testar sistemas sem autorização é crime (no Brasil, Lei 12.737/2012 e Marco
+> Civil da Internet). Nunca rode nada contra um alvo sem autorização por escrito.
+
+---
+
 ## 📑 Índice
 
 1. [O que é este template](#1-o-que-é-este-template)
@@ -106,49 +113,72 @@ Pronto — daí em diante é seguir o [fluxo de trabalho](#6-o-fluxo-de-trabalho
 
 ## 4. Como o Claude Code carrega o template
 
-Entender isto é o que faz o template funcionar de verdade. São **três camadas**,
+Entender isto é o que faz o template funcionar de verdade. São **quatro camadas**,
 cada uma carregada de um jeito diferente:
 
 ### Camada 1 — `CLAUDE.md` (raiz): carrega sozinho
 O Claude Code carrega os arquivos de memória **automaticamente** ao iniciar a
 sessão, subindo pela árvore de diretórios a partir da pasta atual. Então o
-`CONFIG` e as regras inegociáveis já entram no contexto sem você fazer nada.
+`CONFIG`, as regras inegociáveis e a **política de skills** já entram no
+contexto sem você fazer nada.
 
 ### Camada 2 — `specs/`: carregam sob demanda
 Os arquivos em `specs/` **não** entram sozinhos. O Claude Code os lê quando:
-- um **comando** aponta para eles (ex: `/recon` diz "carregue `specs/scenarios/web.md`"), ou
+- uma **skill** ou comando aponta para eles, ou
 - você usa **import** com a sintaxe `@caminho/arquivo` dentro do `CLAUDE.md`.
 
-> 💡 **Dica:** se quiser forçar um spec a carregar toda sessão, adicione um import
-> no fim do `CLAUDE.md`, por exemplo: `@specs/scenarios/web.md`
+### Camada 3 — `.claude/skills/<nome>/SKILL.md`: skills com autoinvocação
+**Esta é a camada principal deste template.** Cada skill é uma pasta com um
+`SKILL.md` que tem frontmatter YAML (nome, descrição, ferramentas permitidas,
+categoria) seguido das instruções.
 
-### Camada 3 — `.claude/commands/`: viram comandos `/`
-Cada arquivo `.md` aqui vira um comando slash — o nome do arquivo (sem `.md`) é o
-nome do comando. Assim `recon.md` → `/recon`, `nuclei.md` → `/nuclei`.
+O Claude Code escaneia só o frontmatter de cada skill ao iniciar (~100 tokens
+cada) e carrega o corpo completo **apenas quando a skill é relevante** para o
+que você está fazendo. Isso é **progressive disclosure** — você pode ter dezenas
+de skills sem peso de contexto.
+
+Duas formas de invocar:
+- **Manual:** digite `/<nome>` (ex: `/nuclei`)
+- **Autônoma:** o Claude reconhece a intenção e dispara sozinho (ex: você diz
+  "começa o recon de exemplo.com" → ele dispara a skill `recon`)
+
+### Camada 4 — `.claude/commands/`: fallback legado
+Os arquivos em `.claude/commands/` continuam funcionando como `/comando` (sem
+autoinvocação). Estão preservados aqui como fallback. Se a versão do seu Claude
+Code for antiga ou se você preferir só comando manual, eles funcionam.
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Você abre o Claude Code na pasta do engajamento         │
-└───────────────────────────┬─────────────────────────────┘
-                            │
-          ┌─────────────────┼──────────────────┐
-          ▼                 ▼                  ▼
-   ┌────────────┐   ┌──────────────┐   ┌─────────────────┐
-   │ CLAUDE.md  │   │   specs/     │   │ .claude/commands│
-   │ AUTOMÁTICO │   │ SOB DEMANDA  │   │  viram  /comando│
-   │ (sempre)   │   │ (quando lido)│   │  (você invoca)  │
-   └────────────┘   └──────────────┘   └─────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  Você abre o Claude Code na pasta do engajamento                 │
+└───────────────────────────────┬──────────────────────────────────┘
+                                │
+        ┌───────────────────────┼─────────────────────┐
+        ▼                       ▼                     ▼
+ ┌─────────────┐    ┌─────────────────┐   ┌──────────────────────┐
+ │ CLAUDE.md   │    │ specs/          │   │ .claude/skills/      │
+ │ AUTOMÁTICO  │    │ SOB DEMANDA     │   │ catálogo automático  │
+ │ (regras +   │    │ (skills+commands│   │ corpo carrega quando │
+ │ política)   │    │  apontam)       │   │ skill é relevante    │
+ └─────────────┘    └─────────────────┘   └──────────────────────┘
 ```
 
-### Nota sobre versões do Claude Code
-A partir da v2.1.101 (abril/2026), os comandos slash customizados foram fundidos
-com **skills**. Os arquivos em `.claude/commands/` **continuam funcionando sem
-alteração**. O formato mais novo é `.claude/skills/<nome>/SKILL.md`, que permite
-invocação por `/nome` **e** invocação autônoma pelo Claude.
+### A política de skills (a parte importante)
 
-**Para segurança ofensiva, manter `.claude/commands/` é uma vantagem:** você quer
-disparar um portscan ou um scan do Nuclei **conscientemente**, não que o Claude
-decida sozinho. O controle explícito é mais seguro aqui.
+Como este template lida com **segurança ofensiva**, autoinvocação total seria
+perigosa — o Claude poderia disparar um scan ativo antes de você confirmar.
+A solução está no `CLAUDE.md`: cada skill tem uma `category` no frontmatter, e
+a política regula o comportamento por categoria:
+
+| Categoria | Autoinvocação | Confirmação explícita? |
+|---|---|---|
+| `phase`, `analysis`, `passive-recon` | ✅ livre | ❌ não |
+| `active-recon` | ✅ livre | ⚠️ confirme alvo+rate |
+| `active-offensive` (nuclei, ffuf, portscan…) | ⚠️ planeja | ✅ **OBRIGATÓRIA** |
+
+Quando uma skill `active-offensive` é autoinvocada, o Claude **prepara o
+comando e mostra o plano**, mas espera você dizer "pode rodar" antes de
+executar. Filosofia: máxima autonomia para coletar, planejar e analisar; trava
+na hora de mandar pacote ativo ao alvo.
 
 ---
 

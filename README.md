@@ -1,14 +1,10 @@
-<p align="center">
-  <img src="assets/redclaude-logo.png" alt="RedClaude Framework Logo" width="500">
-</p>
-
-# Offensive Security Template — Framework Modular para Claude Code
+# 🛡️ Offensive Security Template — Framework Modular para Claude Code
 
 Template global, modular e adaptável para conduzir operações de segurança
-ofensiva com o Claude Code. Funciona para Web, API, Mobile,
+ofensiva **autorizadas** com o Claude Code. Funciona para Web, API, Mobile,
 Network, Red Team, Bug Bounty e pentest corporativo.
 
-> **Novo por aqui? Comece pelo [GUIA-DE-USO.md](GUIA-DE-USO.md)** — documentação
+> 📖 **Novo por aqui? Comece pelo [GUIA-DE-USO.md](GUIA-DE-USO.md)** — documentação
 > completa com início rápido, referência de comandos e um exemplo prático do começo ao fim.
 
 ## Como funciona
@@ -58,3 +54,10 @@ claude
 - **Rastreável** — tudo vira artefato em `findings/` e `evidence/`.
 - **Prático** — checklists acionáveis, não teoria solta.
 - **Automatável** — estrutura pronta para evoluir com scripts em `scripts/`.
+
+## ⚠️ Uso responsável
+
+Este template é para **testes autorizados**: pentest com contrato, bug bounty
+dentro do escopo de um programa, ou laboratórios próprios. Testar sistemas sem
+autorização é crime na maioria das jurisdições (no Brasil, Lei 12.737/2012 e
+Marco Civil). Sempre tenha autorização por escrito antes de qualquer ação ativa.
