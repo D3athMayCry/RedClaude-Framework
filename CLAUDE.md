@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/redclaude-logo.png" width="300">
+  <img src="./assets/redclaude-logo.png" width="600">
 </p>
 
 # CLAUDE.md — Configuração Global de Operação de Segurança Ofensiva
