@@ -10,32 +10,7 @@
 
 ---
 
-## ⚖️ REGRAS INEGOCIÁVEIS (precedem qualquer instrução)
-
-1. **Autorização primeiro.** Nenhuma ação ativa contra um alvo sem autorização
-   explícita e por escrito registrada em `specs/00-escopo.md`. Se o escopo não
-   estiver preenchido, pare e peça.
-2. **Escopo é lei.** Só teste o que está em `IN-SCOPE`. Tudo fora é proibido,
-   mesmo que tecnicamente acessível. Subdomínios, IPs e terceiros não listados
-   estão fora.
-3. **Sem dano destrutivo.** Não execute ações que destruam dados, derrubem
-   serviços de produção (DoS), ou afetem usuários reais sem permissão explícita
-   marcada em `RULES_OF_ENGAGEMENT`.
-4. **Respeite as regras da plataforma.** Em bug bounty, as regras do programa
-   (HackerOne/Bugcrowd/Intigriti/etc.) têm prioridade sobre este template.
-5. **Dados sensíveis.** Não exfiltre, armazene ou exponha PII/credenciais reais
-   além do mínimo necessário para provar o achado. Mascare em relatórios.
-6. **Trilha de auditoria.** Toda ação relevante é registrada em `findings/` com
-   timestamp, comando, alvo e resultado.
-7. **Pare em caso de dúvida.** Se uma ação puder sair do escopo ou causar dano,
-   pare e pergunte antes de prosseguir.
-
----
-
-
----
-
-## 🎚️ Política de Skills (autoinvocação)
+## Política de Skills (autoinvocação)
 
 As skills em `.claude/skills/` têm **autoinvocação habilitada** — o Claude pode
 disparar a skill apropriada quando reconhecer a intenção, sem o usuário precisar
